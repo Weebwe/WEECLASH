@@ -1,35 +1,48 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const introVideo = document.getElementById('intro-video');
     const startButton = document.getElementById('startButton');
     const clickSound = document.getElementById('clickSound');
 
-    // Attempt to play video. If 'muted' is removed and browser permits, sound will play.
-    // No explicit .play() call needed here as 'autoplay' handles it for visual playback.
-    // However, calling .play() again can help catch errors if initial autoplay with sound fails.
+    // Telegram WebApp API
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // ✅ Автоматичний перехід, якщо авторизовано
+    const user = tg.initDataUnsafe.user;
+    if (user) {
+        console.log("Автоматичний вхід як:", user.username || user.first_name);
+        window.location.href = 'game.html';
+        return; // Зупиняємо подальше виконання
+    }
+
+    // Відтворення відео
     introVideo.play().catch(error => {
-        console.log('Помилка відтворення відео (можливо, браузер все ж блокує автозапуск звуку):', error);
+        console.log('Помилка відтворення відео:', error);
     });
 
-    // Play click sound when the Start button is clicked
+    // Натискання кнопки "Старт"
     startButton.addEventListener('click', () => {
-        clickSound.currentTime = 0; // Reset sound to the beginning
+        clickSound.currentTime = 0;
         clickSound.play().catch(error => {
             console.log('Не вдалося відтворити звук кліку:', error);
         });
 
-        window.location.href = 'game.html'; // Navigate to the game page
+        if (user) {
+            window.location.href = 'game.html';
+        } else {
+            alert("Відкрийте гру через Telegram бот для авторизації.");
+        }
     });
 
-    // Register Service Worker (for PWA)
+    // Реєстрація Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
-                    console.log('ServiceWorker registered with scope:', registration.scope);
+                    console.log('ServiceWorker зареєстрований:', registration.scope);
                 })
                 .catch(error => {
-                    console.log('ServiceWorker registration failed:', error);
+                    console.log('Помилка ServiceWorker:', error);
                 });
         });
     }
