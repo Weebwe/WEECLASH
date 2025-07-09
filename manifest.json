@@ -1,0 +1,21 @@
+{
+  "name": "WEE CLASH",
+  "short_name": "WEE CLASH",
+  "description": "Опис вашої веб-програми WEE CLASH",
+  "start_url": "http://192.168.1.236:8080",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "ico.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "ico.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

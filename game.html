@@ -1,0 +1,613 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>WEE CLASH</title>
+
+    <link rel="icon" href="ico.png" type="image/png">
+    <link rel="apple-touch-icon" href="ico.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000"/> 
+
+    <style>
+        /* Загальні стилі */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex;
+            flex-direction: column; 
+            min-height: 100vh;
+            margin: 0;
+            color: #fff;
+            text-align: center;
+            
+            background-image: url('media/fon.png'); /* Фонове зображення на весь екран */
+            background-size: cover; 
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #333; 
+            overflow: hidden; /* Запобігаємо скролу основного body */
+            position: relative; /* Для позиціонування елементів UI */
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+            font-size: calc(1vh + 0.5vw); /* Комбінація vh та vw для кращої адаптивності */
+
+            padding-bottom: env(safe-area-inset-bottom, 0); 
+        }
+
+        /* ----- Верхня Панель (Top Panel) ----- */
+        .top-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8vh; 
+            background: linear-gradient(to bottom, rgba(15, 15, 15, 0.95), rgba(30, 30, 30, 0.9));
+            padding: env(safe-area-inset-top, 0) 1vw 0.5vh 1vw; 
+            box-sizing: border-box;
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.9);
+            border-bottom: 0.2vh solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* ----- Контейнер для Аватарки та Логіну ----- */
+        .user-profile-info { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            font-size: 0.9em; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 15vw; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+            margin-right: 1.5vw; 
+            flex-shrink: 0; 
+            position: relative; 
+        }
+
+        .user-profile-info:hover {
+            transform: translateY(-0.2vh);
+        }
+
+        /* Зміни для Аватарки */
+        .avatar {
+            width: 5vh; 
+            height: 5vh;
+            border-radius: 10%; 
+            border: 0.2vh solid #f1c40f; 
+            box-shadow: 0 0 0.8vh rgba(241, 196, 15, 0.8);
+            object-fit: cover; 
+            margin-bottom: 0.3vh; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative; /* Щоб рівень був відносно аватарки */
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 1.2vh rgba(241, 196, 15, 1);
+        }
+
+        /* Стиль для рівня героя - розміщено на аватарці */
+        .hero-level {
+            position: absolute;
+            bottom: 0.2vh; /* Розташування знизу аватарки */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий фон */
+            color: #f1c40f;
+            font-size: 0.6em; /* Просто число, зменшений розмір */
+            padding: 0.1vh 0.4vw;
+            border-radius: 0.3vh;
+            border: 0.1vh solid #f1c40f;
+            min-width: 2.5vh; 
+            text-align: center;
+            box-shadow: 0 0 0.3vh rgba(241, 196, 15, 0.7);
+            line-height: 1; /* Щоб не було зайвого простору зверху/знизу */
+        }
+        /* Адаптуємо hero-level, щоб він був всередині аватарки */
+        .avatar + .hero-level {
+            position: absolute; /* Позиціонуємо відносно .avatar */
+            bottom: 0.2vh;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #f1c40f;
+            font-size: 0.6em;
+            padding: 0.1vh 0.4vw;
+            border-radius: 0.3vh;
+            border: 0.1vh solid #f1c40f;
+            min-width: 2.5vh;
+            text-align: center;
+            box-shadow: 0 0 0.3vh rgba(241, 196, 15, 0.7);
+            line-height: 1;
+            z-index: 1; /* Перекриває аватарку */
+        }
+
+
+        /* Контейнер для ресурсів та загальної сили */
+        .resource-and-power-container {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; /* Змінено на center для центрування */
+            flex-grow: 1; 
+            margin-right: 1.5vw; /* Відступ від кнопки налаштувань */
+            justify-content: center; /* Центрування по вертикалі в межах доступного простору */
+        }
+
+        .resource-container {
+            display: flex;
+            gap: 1.5vw; 
+            align-items: center;
+            flex-shrink: 1; 
+            min-width: 0; 
+            /* padding-left: 1vw; видалено, бо тепер центруємо */
+            margin-bottom: 0.5vh; 
+            justify-content: center; /* Центрування ресурсів */
+            width: 100%; /* Щоб gap працював коректно при центруванні */
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 1.1em; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            white-space: nowrap; 
+        }
+
+        .resource-item .emoji-icon {
+            font-size: 1.6em; 
+            margin-right: 0.5vw;
+            filter: drop-shadow(0 0 0.4vh rgba(255,255,255,0.4));
+        }
+
+        /* Стиль для загальної сили */
+        .total-power {
+            font-size: 1.6em; 
+            font-weight: bold; 
+            color: #e74c3c; 
+            text-shadow: 0 0 1vh rgba(231, 76, 60, 0.8), 0 0 0.5vh rgba(0, 0, 0, 0.9);
+            /* margin-left: 1vw; видалено, бо тепер центруємо */
+        }
+
+
+        #settingsButton {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0; 
+            color: white; 
+            transition: transform 0.2s, filter 0.2s;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            height: 100%; 
+            margin-right: 1vw; 
+            flex-shrink: 0; 
+        }
+        #settingsButton .emoji-icon {
+            font-size: 1.6em; 
+            filter: drop-shadow(0 0 0.5vh rgba(255,255,255,0.6));
+        }
+        #settingsButton:hover .emoji-icon {
+            transform: rotate(30deg); 
+            filter: drop-shadow(0 0 1vh rgba(255,255,255,0.8));
+        }
+        #settingsButton:active {
+            transform: scale(0.95);
+        }
+
+        /* Стилі для перемикання "сторінок" */
+        .game-screen {
+            width: 100%;
+            height: calc(100vh - 8vh - 9vh - env(safe-area-inset-bottom, 0) - env(safe-area-inset-top, 0)); 
+            position: absolute;
+            top: 8vh; 
+            left: 0;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.7); 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            padding: 2vh 2vw; 
+            box-sizing: border-box; 
+        }
+
+        .game-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Стилі для заголовків сторінок */
+        .screen-title {
+            font-size: 3em; 
+            color: #f1c40f;
+            text-shadow: 0.5vh 0.5vh 1vh rgba(0,0,0,0.9), 0 0 2vh rgba(241, 196, 15, 0.7);
+            margin-bottom: 3vh; 
+            margin-top: -10vh; 
+        }
+
+        /* Стилі для основного тексту на екранах */
+        .game-screen p {
+            font-size: 1.2em; 
+            margin: 1vh auto;
+            max-width: 80%; 
+        }
+
+        /* Стилі для кнопок "Назад" та інших кнопок на екранах */
+        .screen-button {
+            background-color: #3498db; 
+            color: white;
+            border: none;
+            padding: 1.5vh 2.5vw;
+            border-radius: 1.2vh;
+            cursor: pointer;
+            font-size: 1.2em; 
+            font-weight: bold;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0.8vh 2vh rgba(0,0,0,0.6);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            letter-spacing: 0.1vw;
+            margin-top: 2vh; 
+        }
+
+        .screen-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-0.5vh) scale(1.03);
+            box-shadow: 0 1.2vh 3vh rgba(0,0,0,0.8);
+        }
+        .screen-button:active {
+            transform: translateY(0);
+            box-shadow: 0 0.4vh 1vh rgba(0,0,0,0.4);
+        }
+
+        /* ----- Нижня Панель Дій (Bottom Action Panel) ----- */
+        .bottom-action-panel {
+            position: fixed;
+            bottom: env(safe-area-inset-bottom, 0); 
+            left: 0;
+            width: 100%;
+            height: 9vh; 
+            background: linear-gradient(to top, rgba(15, 15, 15, 0.95), rgba(30, 30, 30, 0.9));
+            padding: 0.5vh 1vw; 
+            padding-bottom: 0.5vh; 
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-around; 
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.9);
+            border-top: 0.2vh solid rgba(255, 255, 255, 0.15);
+        }
+
+        .bottom-action-button {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: white; 
+            cursor: pointer;
+            padding: 0.5vh 0.8vw; 
+            font-size: 0.9em; 
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            transition: transform 0.2s, color 0.2s;
+            flex: 1; 
+            max-width: 20%; 
+            white-space: nowrap; 
+            text-overflow: ellipsis; 
+            overflow: hidden; 
+        }
+
+        .bottom-action-button .emoji-icon { 
+            font-size: 3em; 
+            margin-bottom: 0.5vh; 
+            filter: drop-shadow(0 0 0.5vh rgba(255,255,255,0.5));
+            transition: filter 0.2s, transform 0.2s;
+            line-height: 1; 
+        }
+        
+        /* Стилі активної кнопки */
+        .bottom-action-button.active-nav {
+            color: #f1c40f; 
+            transform: translateY(-0.8vh); 
+        }
+        .bottom-action-button.active-nav .emoji-icon {
+            filter: drop-shadow(0 0 1.5vh rgba(241, 196, 15, 0.9)) drop-shadow(0 0 1vh rgba(255, 255, 255, 0.7)); 
+            transform: scale(1.1); 
+        }
+
+        .bottom-action-button:hover:not(.active-nav) {
+            transform: translateY(-0.8vh);
+            color: #a0dfff; 
+        }
+        .bottom-action-button:hover:not(.active-nav) .emoji-icon {
+             filter: drop-shadow(0 0 1vh rgba(255,255,255,0.8));
+        }
+        .bottom-action-button:active {
+            transform: translateY(0);
+        }
+
+        /* Media Queries для тонкої настройки на різних пристроях */
+        @media (max-width: 350px) {
+            body {
+                font-size: calc(1.2vh + 0.6vw); 
+            }
+            .screen-title {
+                font-size: 2.5em; 
+                margin-top: -8vh;
+            }
+            .bottom-action-button .emoji-icon {
+                font-size: 2.8em; 
+            }
+            .bottom-action-button span {
+                font-size: 0.8em; 
+            }
+            .resource-item .emoji-icon {
+                font-size: 1.4em;
+            }
+            .resource-item span {
+                font-size: 0.9em;
+            }
+            .user-profile-info { 
+                max-width: 20vw; 
+            }
+            .avatar {
+                width: 4.5vh;
+                height: 4.5vh;
+            }
+            .hero-level {
+                font-size: 0.6em;
+            }
+            .total-power {
+                font-size: 1.3em;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            body {
+                font-size: calc(0.8vh + 0.4vw); 
+            }
+            .screen-title {
+                font-size: 3.5em; 
+            }
+            .bottom-action-button .emoji-icon {
+                font-size: 3.8em;
+            }
+            .bottom-action-button span {
+                font-size: 1em;
+            }
+            .avatar {
+                width: 6vh;
+                height: 6vh;
+            }
+            .user-profile-info { 
+                font-size: 1em;
+                max-width: 10vw;
+            }
+            .hero-level {
+                font-size: 0.8em;
+            }
+            .total-power {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            body {
+                font-size: calc(0.7vh + 0.3vw); 
+            }
+            .screen-title {
+                font-size: 4em;
+                margin-top: -15vh; 
+            }
+            .bottom-action-button .emoji-icon {
+                font-size: 4em;
+            }
+            .bottom-action-button span {
+                font-size: 1.1em;
+            }
+            .avatar {
+                width: 6.5vh;
+                height: 6.5vh;
+            }
+            .user-profile-info { 
+                font-size: 1.1em;
+                max-width: 8vw;
+            }
+            .hero-level {
+                font-size: 0.9em;
+            }
+            .total-power {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+
+        <div class="top-panel">
+            <div class="user-profile-info"> 
+                <img src="media/avatar.png" alt="Аватар користувача" class="avatar">
+                <span>Player123</span> 
+                </div>
+
+            <div class="resource-and-power-container"> 
+                <div class="resource-container">
+                    <div class="resource-item">
+                        <span class="emoji-icon">🌳</span> <span>1250</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">🪨</span> <span>875</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">🍎</span> <span>2100</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">💰</span> <span>500</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">✨</span> <span>250</span>
+                    </div>
+                </div>
+                <div class="total-power">💪 12345</div> 
+            </div>
+            
+            <button id="settingsButton" aria-label="Налаштування гри">
+                <span class="emoji-icon">⚙️</span>
+            </button>
+        </div>
+
+        <div id="heroScreen" class="game-screen active"> 
+            <h2 class="screen-title">Ваш Герой</h2>
+            <p>Тут буде інформація про вашого героя. Це довгий текст для тестування прокрутки та адаптивності, щоб переконатися, що вміст не виходить за межі екрану і користувач може його повністю переглянути. Ласкаво просимо до WEE CLASH!</p>
+            <p>Ваші характеристики, інвентар та можливості героя будуть відображатися тут. Готуйтеся до пригод!</p>
+        </div>
+
+        <div id="castleScreen" class="game-screen">
+            <h2 class="screen-title">Ваш Замок</h2>
+            <p>Будуйте та покращуйте свій замок. Зміцнюйте стіни, розширюйте виробництво ресурсів та готуйтеся до оборони!</p>
+            <button class="screen-button" data-target-screen="heroScreen">Назад</button>
+        </div>
+
+        <div id="arenaScreen" class="game-screen">
+            <h2 class="screen-title">Арена</h2>
+            <p>Боріться з іншими гравцями та доводьте свою майстерність! Заробляйте нагороди та піднімайтеся в рейтингу.</p>
+            <button class="screen-button" data-target-screen="heroScreen">Назад</button>
+        </div>
+
+        <div id="messagesScreen" class="game-screen">
+            <h2 class="screen-title">Повідомлення</h2>
+            <p>Ваші ігрові повідомлення та сповіщення. Будьте в курсі всіх важливих подій у грі.</p>
+            <button class="screen-button" data-target-screen="heroScreen">Назад</button>
+        </div>
+
+        <div id="ratingScreen" class="game-screen">
+            <h2 class="screen-title">Рейтинг</h2>
+            <p>Подивіться, хто найкращий! Змагайтеся за перші місця та отримуйте визнання серед гравців.</p>
+            <button class="screen-button" data-target-screen="heroScreen">Назад</button>
+        </div>
+
+        <div id="settingsScreen" class="game-screen">
+            <h2 class="screen-title">Налаштування</h2>
+            <p>Тут будуть опції налаштувань гри: звук, музика, мова та інші параметри.</p>
+            <button class="screen-button" data-target-screen="heroScreen">Назад</button>
+        </div>
+
+        <div class="bottom-action-panel">
+            <button class="bottom-action-button active-nav" data-target-screen="heroScreen">
+                <span class="emoji-icon">👤</span>
+                <span>Герой</span>
+            </button>
+            <button class="bottom-action-button" data-target-screen="castleScreen">
+                <span class="emoji-icon">🏰</span>
+                <span>Замок</span>
+            </button>
+            <button class="bottom-action-button" data-target-screen="arenaScreen">
+                <span class="emoji-icon">⚔️</span>
+                <span>Арена</span>
+            </button>
+            <button class="bottom-action-button" data-target-screen="messagesScreen">
+                <span class="emoji-icon">✉️</span>
+                <span>Повідомлення</span>
+            </button>
+            <button class="bottom-action-button" data-target-screen="ratingScreen">
+                <span class="emoji-icon">🏆</span>
+                <span>Рейтинг</span>
+            </button>
+        </div>
+
+    </div>
+
+    <audio id="backgroundMusic" src="media/background.mp3" loop preload="auto"></audio>
+    <audio id="clickSound" src="media/click.mp3" preload="auto"></audio>
+
+    <script>
+        const screens = document.querySelectorAll('.game-screen');
+        const navButtons = document.querySelectorAll('.bottom-action-button');
+        const screenButtons = document.querySelectorAll('.screen-button');
+        const settingsButton = document.getElementById('settingsButton'); 
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const clickSound = document.getElementById('clickSound');
+
+        function playClickSound() {
+            if (clickSound) {
+                clickSound.currentTime = 0; 
+                clickSound.play().catch(e => console.error("Помилка відтворення звуку кліку:", e));
+            }
+        }
+
+        function showScreen(screenId) {
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            } else {
+                console.warn(`Екран з ID "${screenId}" не знайдено.`);
+            }
+
+            navButtons.forEach(button => {
+                button.classList.remove('active-nav');
+                if (button.dataset.targetScreen === screenId) {
+                    button.classList.add('active-nav');
+                }
+            });
+
+            playClickSound();
+        }
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showScreen(button.dataset.targetScreen);
+            });
+        });
+
+        screenButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showScreen(button.dataset.targetScreen);
+            });
+        });
+
+        settingsButton.addEventListener('click', () => {
+            showScreen('settingsScreen');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            backgroundMusic.play().catch(e => console.log("Музика не може бути відтворена автоматично без взаємодії користувача:", e));
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>
