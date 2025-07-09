@@ -13,27 +13,22 @@
         /* Додайте ці стилі або переконайтеся, що вони є у вашому style.css */
         body {
             margin: 0;
-            overflow: hidden; /* Приховуємо скролбари, якщо відео виходить за межі */
+            /* overflow: hidden;  Приховуємо скролбари, якщо відео виходить за межі */
             background-color: #000; /* Чорний фон, якщо відео ще не завантажилось */
         }
 
+        /* Стилі для відео - повернуто до базового стану */
         #intro-video {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1; /* Відео на задньому плані */
-            background-size: cover;
-            /* Додатково: приховуємо відео до готовності, якщо потрібно */
-            /* opacity: 0; */
-            /* transition: opacity 1s ease-in; */
+            /* Прибрано: position, right, bottom, min-width, min-height, width, height, z-index, background-size */
+            /* Відео тепер буде відображатися зі своїм природним розміром,
+               або як визначено у вашому css/style.css */
+            display: block; /* Забезпечуємо, що відео є блоковим елементом */
+            max-width: 100%; /* Щоб відео не виходило за межі екрану, якщо воно дуже велике */
+            height: auto; /* Зберігаємо пропорції */
         }
 
         .content-overlay {
-            position: fixed;
+            position: fixed; /* Залишаємо фіксованим, щоб перекривати все */
             top: 0;
             left: 0;
             width: 100%;
@@ -129,9 +124,6 @@
                     alert("Не вдалося відтворити відео. Спробуйте ще раз або перевірте налаштування браузера.");
                 });
             });
-
-            // Додатково: для прискорення завантаження відео, можна встановити атрибут preload
-            // video.setAttribute('preload', 'auto');
         });
     </script>
 </body>
