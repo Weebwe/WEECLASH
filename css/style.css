@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #000; /* Fallback background */
+    color: #fff;
+    text-align: center;
+    overflow: hidden; /* Prevent scrolling */
+    position: relative;
+}
+
+#intro-video {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain; /* Відео вміщується повністю, можуть бути чорні смуги */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    display: block;
+    margin: auto;
+}
+
+.content-overlay {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align items to the bottom */
+    align-items: center;
+    height: 100vh; /* Takes full height of the viewport */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#startButton {
+    position: absolute;
+    bottom: 60px; /* Adjust as needed */
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background-color: #FFD700; /* Gold */
+    color: #333; /* Dark text */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 2;
+}
+
+#startButton:hover {
+    background-color: #DAA520; /* Darker gold on hover */
+    transform: scale(1.05);
+}
+
+.copyright-text {
+    position: absolute;
+    bottom: 10px; /* Even lower, closer to the very bottom */
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 2;
+}
