@@ -8,71 +8,10 @@
     <link rel="apple-touch-icon" href="ico.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000"/>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Додайте ці стилі або переконайтеся, що вони є у вашому style.css */
-        body {
-            margin: 0;
-            /* overflow: hidden;  Приховуємо скролбари, якщо відео виходить за межі */
-            background-color: #000; /* Чорний фон, якщо відео ще не завантажилось */
-        }
-
-        /* Стилі для відео - повернуто до базового стану */
-        #intro-video {
-            /* Прибрано: position, right, bottom, min-width, min-height, width, height, z-index, background-size */
-            /* Відео тепер буде відображатися зі своїм природним розміром,
-               або як визначено у вашому css/style.css */
-            display: block; /* Забезпечуємо, що відео є блоковим елементом */
-            max-width: 100%; /* Щоб відео не виходило за межі екрану, якщо воно дуже велике */
-            height: auto; /* Зберігаємо пропорції */
-        }
-
-        .content-overlay {
-            position: fixed; /* Залишаємо фіксованим, щоб перекривати все */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий чорний фон */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1; /* Оверлей над відео */
-            color: white;
-            text-align: center;
-        }
-
-        #startButton {
-            padding: 15px 30px;
-            font-size: 24px;
-            background-color: #4CAF50; /* Зелена кнопка */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 20px; /* Відступ від копірайту */
-        }
-
-        #startButton:hover {
-            background-color: #45a049;
-        }
-
-        .copyright-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            position: absolute; /* Розміщуємо внизу */
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="css/style.css"> </head>
 <body>
 
-    <video id="intro-video" loop playsinline>
+    <video id="intro-video" autoplay loop playsinline>
         <source src="media/intro.mp4" type="video/mp4">
         Ваш браузер не підтримує відео тег.
     </video>
@@ -84,47 +23,6 @@
 
     <audio id="clickSound" src="media/click.mp3" preload="auto"></audio>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('intro-video');
-            const startButton = document.getElementById('startButton');
-            const contentOverlay = document.querySelector('.content-overlay');
-            const clickSound = document.getElementById('clickSound');
-
-            // 1. Спробуємо відтворити відео одразу, але без звуку (muted).
-            // Це часто дозволяється браузерами.
-            video.muted = true;
-            video.play().then(() => {
-                // Якщо автозапуск спрацював, приховуємо оверлей
-                contentOverlay.style.display = 'none';
-                console.log("Відео відтворилося автоматично (muted).");
-            }).catch(error => {
-                // Якщо автозапуск заблоковано, показуємо кнопку "Старт"
-                console.log("Автозапуск відео заблоковано браузером. Чекаємо на клік.", error);
-                contentOverlay.style.display = 'flex'; // Переконайтеся, що оверлей видимий
-            });
-
-            // 2. Обробник натискання кнопки "Старт"
-            startButton.addEventListener('click', function() {
-                if (clickSound) {
-                    clickSound.play().catch(e => console.log("Помилка відтворення звуку кліку:", e));
-                }
-
-                // Вмикаємо звук відео (якщо він є)
-                video.muted = false;
-
-                // Запускаємо відтворення відео
-                video.play().then(() => {
-                    // Якщо відео успішно відтворилося, приховуємо оверлей
-                    contentOverlay.style.display = 'none';
-                    console.log("Відео почало відтворюватися після натискання 'Старт'.");
-                }).catch(error => {
-                    console.error("Помилка відтворення відео після кліку на 'Старт':", error);
-                    // Можливо, повідомте користувача, що щось пішло не так
-                    alert("Не вдалося відтворити відео. Спробуйте ще раз або перевірте налаштування браузера.");
-                });
-            });
-        });
-    </script>
-</body>
+    <script src="js/script.js"></script> </body>
 </html>
+
