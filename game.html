@@ -1,157 +1,220 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>WEE CLASH</title>
-  <link rel="icon" href="ico.png" type="image/png" />
-  <link rel="apple-touch-icon" href="ico.png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#000000" />
-  <link rel="stylesheet" href="css/style.css" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>WEE CLASH</title>
+
+    <link rel="icon" href="ico.png" type="image/png">
+    <link rel="apple-touch-icon" href="ico.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000"/> 
+
+    <style>
+        /* ... (Your existing CSS here) ... */
+
+        /* Add a small spinner or placeholder for avatar loading */
+        .loading-avatar {
+            border: 0.2vh solid #f3f3f3; /* Light grey */
+            border-top: 0.2vh solid #f1c40f; /* Yellow */
+            border-radius: 50%;
+            width: 5vh;
+            height: 5vh;
+            animation: spin 1s linear infinite;
+            display: inline-block; /* Or block, depending on layout */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Style for the Telegram login button if you customize it */
+        .telegram-login-button {
+            margin-top: 1vh; /* Adjust as needed */
+            padding: 1vh 2vw;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 0.8vh;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5vw;
+            box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.5);
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .telegram-login-button:hover {
+            background-color: #007bb5;
+            transform: translateY(-0.2vh);
+        }
+
+        .telegram-login-button img {
+            height: 2vh; /* Adjust icon size */
+            width: auto;
+        }
+
+        /* Adjustments for when no user is logged in */
+        .user-profile-info.logged-out {
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .user-profile-info.logged-out .avatar,
+        .user-profile-info.logged-out .hero-level,
+        .user-profile-info.logged-out span {
+            display: none; /* Hide placeholder elements when logged out */
+        }
+
+    </style>
 </head>
 <body>
 
-  <div id="gameContainer">
-    <div class="top-panel">
-      <div class="user-profile-info"> 
-        <img src="media/avatar.png" alt="Аватар користувача" class="avatar" />
-        <span>Гравець</span> 
-      </div>
+    <div id="gameContainer">
 
-      <div class="resource-and-power-container"> 
-        <div class="resource-container">
-          <div class="resource-item"><span class="emoji-icon">🌳</span> <span>1250</span></div>
-          <div class="resource-item"><span class="emoji-icon">🪨</span> <span>875</span></div>
-          <div class="resource-item"><span class="emoji-icon">🍎</span> <span>2100</span></div>
-          <div class="resource-item"><span class="emoji-icon">💰</span> <span>500</span></div>
-          <div class="resource-item"><span class="emoji-icon">✨</span> <span>250</span></div>
+        <div class="top-panel">
+            <div class="user-profile-info" id="userProfileInfo"> 
+                <img src="media/avatar.png" alt="Аватар користувача" class="avatar" id="userAvatar">
+                <span id="userName">Увійдіть</span> 
+                <span class="hero-level" id="heroLevel">1</span> </div>
+
+            <div class="resource-and-power-container"> 
+                <div class="resource-container">
+                    <div class="resource-item">
+                        <span class="emoji-icon">🌳</span> <span>1250</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">🪨</span> <span>875</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">🍎</span> <span>2100</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">💰</span> <span>500</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji-icon">✨</span> <span>250</span>
+                    </div>
+                </div>
+                <div class="total-power">💪 12345</div> 
+            </div>
+            
+            <button id="settingsButton" aria-label="Налаштування гри">
+                <span class="emoji-icon">⚙️</span>
+            </button>
         </div>
-        <div class="total-power">💪 12345</div> 
-      </div>
-      
-      <button id="settingsButton" aria-label="Налаштування гри">
-        <span class="emoji-icon">⚙️</span>
-      </button>
-    </div>
 
-    <div id="heroScreen" class="game-screen active"> 
-      <h2 class="screen-title">Ваш Герой</h2>
-      <p>Ласкаво просимо до WEE CLASH!</p>
-      <p>Ваші характеристики, інвентар та можливості героя будуть відображатися тут.</p>
-    </div>
+        <div id="heroScreen" class="game-screen active"> 
+            <h2 class="screen-title">Ваш Герой</h2>
+            <p>Тут буде інформація про вашого героя. Це довгий текст для тестування прокрутки та адаптивності, щоб переконатися, що вміст не виходить за межі екрану і користувач може його повністю переглянути. Ласкаво просимо до WEE CLASH!</p>
+            <p>Ваші характеристики, інвентар та можливості героя будуть відображатися тут. Готуйтеся до пригод!</p>
+            <div id="telegramLoginContainer"></div>
+        </div>
+        
+        </div>
 
-    <div id="castleScreen" class="game-screen">
-      <h2 class="screen-title">Ваш Замок</h2>
-      <p>Будуйте та покращуйте свій замок. Зміцнюйте оборону та виробництво!</p>
-      <button class="screen-button" data-target-screen="heroScreen">Назад</button>
-    </div>
+    <audio id="backgroundMusic" src="media/background.mp3" loop preload="auto"></audio>
+    <audio id="clickSound" src="media/click.mp3" preload="auto"></audio>
 
-    <div id="arenaScreen" class="game-screen">
-      <h2 class="screen-title">Арена</h2>
-      <p>Боріться з іншими гравцями та здобувайте славу!</p>
-      <button class="screen-button" data-target-screen="heroScreen">Назад</button>
-    </div>
+    <script>
+        // ... (Your existing JavaScript) ...
 
-    <div id="messagesScreen" class="game-screen">
-      <h2 class="screen-title">Повідомлення</h2>
-      <p>Ваші ігрові сповіщення та оновлення.</p>
-      <button class="screen-button" data-target-screen="heroScreen">Назад</button>
-    </div>
+        const userProfileInfo = document.getElementById('userProfileInfo');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const heroLevel = document.getElementById('heroLevel');
+        const telegramLoginContainer = document.getElementById('telegramLoginContainer');
 
-    <div id="ratingScreen" class="game-screen">
-      <h2 class="screen-title">Рейтинг</h2>
-      <p>Змагайтеся за перші місця у таблиці лідерів.</p>
-      <button class="screen-button" data-target-screen="heroScreen">Назад</button>
-    </div>
+        // Function to update UI with user data
+        function updateUserInfo(userData) {
+            if (userData && userData.username) {
+                // User is logged in
+                userProfileInfo.classList.remove('logged-out');
+                userAvatar.style.display = 'block'; // Show avatar
+                userName.style.display = 'block';   // Show username
+                heroLevel.style.display = 'block';  // Show hero level
 
-    <div id="settingsScreen" class="game-screen">
-      <h2 class="screen-title">Налаштування</h2>
-      <p>Увімкніть/вимкніть звук, виберіть мову та інше.</p>
-      <button class="screen-button" data-target-screen="heroScreen">Назад</button>
-    </div>
+                userName.textContent = userData.username;
+                if (userData.photo_url) {
+                    userAvatar.src = userData.photo_url;
+                } else {
+                    userAvatar.src = 'media/avatar.png'; // Fallback default avatar
+                }
+                // If you have a specific hero level for the user, set it here
+                heroLevel.textContent = userData.heroLevel || '1'; // Example: get hero level from user data
+                telegramLoginContainer.innerHTML = ''; // Clear login button if logged in
+            } else {
+                // User is not logged in
+                userProfileInfo.classList.add('logged-out');
+                userAvatar.style.display = 'none'; // Hide avatar
+                userName.style.display = 'none';   // Hide username
+                heroLevel.style.display = 'none';  // Hide hero level
+                // Show Telegram login button
+                telegramLoginContainer.innerHTML = `
+                    <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                            data-telegram-login="YOUR_BOT_USERNAME" 
+                            data-size="large" 
+                            data-onauth="onTelegramAuth(user)" 
+                            data-request-access="write"></script>
+                `;
+            }
+        }
 
-    <div class="bottom-action-panel">
-      <button class="bottom-action-button active-nav" data-target-screen="heroScreen">
-        <span class="emoji-icon">👤</span><span>Герой</span>
-      </button>
-      <button class="bottom-action-button" data-target-screen="castleScreen">
-        <span class="emoji-icon">🏰</span><span>Замок</span>
-      </button>
-      <button class="bottom-action-button" data-target-screen="arenaScreen">
-        <span class="emoji-icon">⚔️</span><span>Арена</span>
-      </button>
-      <button class="bottom-action-button" data-target-screen="messagesScreen">
-        <span class="emoji-icon">✉️</span><span>Повідомлення</span>
-      </button>
-      <button class="bottom-action-button" data-target-screen="ratingScreen">
-        <span class="emoji-icon">🏆</span><span>Рейтинг</span>
-      </button>
-    </div>
-  </div>
+        // This function will be called by Telegram widget after successful login
+        // It expects 'user' object from Telegram
+        function onTelegramAuth(user) {
+            // Send user data to your backend for verification and session management
+            fetch('/api/telegram-auth', { // Replace with your actual backend endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Backend confirmed authenticity and returned user data
+                    updateUserInfo(data.user); // Update UI with data from backend
+                    console.log('User logged in:', data.user.username);
+                    // You might want to store a session token/cookie here
+                } else {
+                    console.error('Telegram authentication failed on backend:', data.message);
+                    updateUserInfo(null); // Show logged out state
+                }
+            })
+            .catch(error => {
+                console.error('Error during Telegram authentication:', error);
+                updateUserInfo(null); // Show logged out state
+            });
+        }
 
-  <audio id="backgroundMusic" src="media/background.mp3" loop preload="auto"></audio>
-  <audio id="clickSound" src="media/click.mp3" preload="auto"></audio>
+        // On page load, check if the user is already logged in (e.g., via session/cookie)
+        document.addEventListener('DOMContentLoaded', () => {
+            backgroundMusic.play().catch(e => console.log("Музика не може бути відтворена автоматично без взаємодії користувача:", e));
 
-  <script>
-    const screens = document.querySelectorAll('.game-screen');
-    const navButtons = document.querySelectorAll('.bottom-action-button');
-    const screenButtons = document.querySelectorAll('.screen-button');
-    const settingsButton = document.getElementById('settingsButton'); 
-    const backgroundMusic = document.getElementById('backgroundMusic');
-    const clickSound = document.getElementById('clickSound');
+            // Example: Fetch user data from your backend to see if they are already logged in
+            fetch('/api/get-current-user') // Replace with your actual backend endpoint
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user) {
+                        updateUserInfo(data.user);
+                    } else {
+                        updateUserInfo(null); // No user logged in, display login button
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching current user:', error);
+                    updateUserInfo(null); // Assume no user if fetch fails
+                });
+        });
 
-    function playClickSound() {
-      if (clickSound) {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(e => console.error("Помилка звуку кліку:", e));
-      }
-    }
-
-    function showScreen(screenId) {
-      screens.forEach(screen => screen.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-      navButtons.forEach(btn => {
-        btn.classList.toggle('active-nav', btn.dataset.targetScreen === screenId);
-      });
-      playClickSound();
-    }
-
-    navButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.targetScreen)));
-    screenButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.targetScreen)));
-    settingsButton.addEventListener('click', () => showScreen('settingsScreen'));
-
-    document.addEventListener('DOMContentLoaded', () => {
-      backgroundMusic.play().catch(() => {
-        console.log("Музика не може бути відтворена без взаємодії користувача.");
-      });
-
-      // ✅ Telegram WebApp інтеграція
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-      const user = tg.initDataUnsafe.user;
-
-      const avatarImg = document.querySelector('.user-profile-info img');
-      const usernameSpan = document.querySelector('.user-profile-info span');
-
-      if (user) {
-        usernameSpan.textContent = user.username || user.first_name || "Гравець";
-        avatarImg.src = user.photo_url || "media/avatar.png";
-      } else {
-        usernameSpan.textContent = "Гість";
-        avatarImg.src = "media/avatar.png";
-      }
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('ServiceWorker OK:', reg.scope))
-          .catch(err => console.log('ServiceWorker error:', err));
-      });
-    }
-  </script>
+        // ... (Rest of your existing JavaScript) ...
+    </script>
 
 </body>
 </html>
